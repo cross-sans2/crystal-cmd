@@ -1,7 +1,8 @@
 #!/usr/bin/env python
-import cmd, os, shutil
-import mod2 as bt# https://github.com/cross-sans/betterTEXT/blob/main/mod/mod2.py
+import cmd, os, shutil, subprocess
+import mod2 as bt# original made by me on a diffirent profile: https://github.com/cross-sans/betterTEXT/blob/main/mod/mod2.py
 from PIL import Image
+import signal
 from colorit import init_colorit, background
 init_colorit()
 
@@ -39,8 +40,6 @@ def image(imgsrc):
 
 
 
-
-
 class Main(cmd.Cmd):
     def __init__(self):
         cmd.Cmd.__init__(self)
@@ -64,8 +63,10 @@ class Main(cmd.Cmd):
 
     def do_clear(self,args):
         bt.clear()
+    
     def do_image(self, imgsrc):
         image(imgsrc)
+    
     def do_ls(self, arg):
         try:
             files = os.listdir(arg) if arg else os.listdir(".")
@@ -100,10 +101,17 @@ class Main(cmd.Cmd):
             except PermissionError:
                 print("Permission denied: {}".format(name))
 
+    def do_run(self, app):
+        try:
+            subprocess.run(app, shell=True)
+        except FileNotFoundError as e:
+            print(f"error: {bt.colored(e,'red')}")
+
     def default(self, arg):
         print("Command not recognized:", arg)
 
     def cmdloop(self, intro=None):
+        signal.signal(signal.SIGINT, signal.SIG_IGN)
         try:
             super().cmdloop(intro)
         except KeyboardInterrupt:
