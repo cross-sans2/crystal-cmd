@@ -1,6 +1,6 @@
 from termcolor import colored
 import webbrowser, os, sys
-__version__ = "betterTEXT v1.2 Crystal edition"
+__version__ = "betterTEXT v1"
 
 def clear():
     if os.name == "nt":
